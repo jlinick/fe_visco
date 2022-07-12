@@ -8,7 +8,7 @@ from ufl import nabla_div
 import numpy as np
 import matplotlib.pyplot as plt
 
-
+print('------------initializing simulation-------------')
 # set parameters
 TOTAL_DAYS = 10.            # total length of simulation (days)
 SEC_PER_DAY = 86400
@@ -295,7 +295,7 @@ E_damp = 0
 E_ext = 0
 sig = Function(Vsig, name="sigma")
 
-data_file = f"{output_prefix}_results.xdmf"
+data_file = f"{output_prefix}_data.xdmf"
 xdmf_file = XDMFFile(data_file)
 xdmf_file.parameters["flush_output"] = True
 xdmf_file.parameters["functions_share_mesh"] = True
@@ -387,7 +387,7 @@ plt.ylabel('displacement (m)')
 plt.savefig(output_file)
 plt.close()
 
-output_file = f'{output_prefix}_depth.png'
+output_file = f'{output_prefix}_lake_depth.png'
 print(f'saving {output_file}')
 plt.plot(time[40:], lake_depth[40:])
 plt.title('Lake Depth')

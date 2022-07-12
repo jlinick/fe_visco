@@ -11,6 +11,8 @@ jump into the directory
 
 `cd fe_visco`
 
-run the simulation (will build the docker image if needed)
+run the simulation with
 `./start_container.sh`
+
+This command will build the docker image (if necessary), then jump you into a running container, call run_simulation.py to run the fe model, save products to a /products subdirectory, then exit and remove the docker container.
 

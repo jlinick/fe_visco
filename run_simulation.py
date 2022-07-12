@@ -289,10 +289,13 @@ time = np.linspace(0, T, num_steps+1)
 middle_displacement = np.zeros((num_steps+1,)) # at midpoint
 lake_depth = np.zeros((num_steps+1,)) # at midpoint
 midpoint_von_mises = np.zeros((num_steps+1,))
-energies = np.zeros((num_steps+1, 4))
+energies = np.zeros((num_steps+1, 7))
 
 E_damp = 0
 E_ext = 0
+E_grav = 0
+E_lake = 0
+E_buoy = 0
 sig = Function(Vsig, name="sigma")
 
 data_file = f"{output_prefix}_data.xdmf"
@@ -367,9 +370,11 @@ for (i, dt) in enumerate(np.diff(time)):
     E_elas = assemble(0.5*k(u_old, u_old))
     E_kin = assemble(0.5*m(v_old, v_old))
     E_damp += dt*assemble(c(v_old, v_old))
-    # E_ext += assemble(Wext(u-u_old))
-    E_tot = E_elas+E_kin+E_damp #-E_ext
-    energies[i+1, :] = np.array([E_elas, E_kin, E_damp, E_tot])
+    E_grav += assemble(Wgrav(u-u_old))
+    E_buoy += assemble(Wbuoy(u-u_old))
+    E_lake += assemble(Wlake(u-u_old))
+    E_tot = E_elas+E_kin+E_damp-E_grav-E_buoy-E_lake
+    energies[i+1, :] = np.array([E_elas, E_kin, E_damp, E_grav, E_buoy, E_lake, E_tot])/1E9
 
 #print(f'middle displacement: {middle_displacement}')
 #print(f'lake depth: {lake_depth}')
@@ -402,5 +407,16 @@ plt.plot(time[40:], midpoint_von_mises[40:])
 plt.title('Effective Stress at Midpoint of Lake')
 plt.xlabel('time (days)')
 plt.ylabel('effective stress (MPa)')
+plt.savefig(output_file)
+plt.close()
+
+
+output_file = f'{output_prefix}_energies.png'
+print(f'saving {output_file}')
+plt.plot(time, energies)
+plt.title('Energies during Simulation')
+plt.xlabel('time (days)')
+plt.ylabel('Energy (GJ)')
+plt.legend(['elastic', 'kinetic', 'damping', 'gravitational', 'buoyancy', 'lake gravitational', 'total'])
 plt.savefig(output_file)
 plt.close()

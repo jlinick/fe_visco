@@ -175,7 +175,7 @@ fb = Buoyancy()
 
 class Gravity(UserExpression):
     def eval(self, value, x):
-        return np.array((0., 0., GRAVITY * WATER_DENSITY))
+        return np.array((0., 0., GRAVITY * ICE_DENSITY))
     def value_shape(self):
         return (3,)
 fg = Gravity()
